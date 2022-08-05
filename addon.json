@@ -1,0 +1,21 @@
+{
+	"author": "Cryotheum",
+	"title": "Weeping Angels",
+	"type": "gamemode",
+	"tags": [
+		"fun",
+		"roleplay"
+	],
+	"ignore": [
+		"*.bat",
+		"*.gma",
+		"*.md",
+		"*.pdn",
+		"*.txt",
+		"*.yml",
+		"*.zip",
+		".git*",
+		"LICENSE",
+		"wiki/*"
+	]
+}

@@ -1,0 +1,12 @@
+"mingedefense"
+{
+	"base"		"base"
+	"title"		"Weeping Angels"
+	"maps"		"^wa_"
+	"menusystem"	"1"
+
+	"settings"
+	{
+		
+	}
+}
