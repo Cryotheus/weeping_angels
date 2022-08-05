@@ -1,0 +1,9 @@
+*.bat
+*.gma
+*.old
+*.old.lua
+*.pdn
+*.sublime-project
+*.sublime-workspace
+*.tar.gz
+*.zip
