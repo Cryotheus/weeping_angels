@@ -1,11 +1,11 @@
 <div id="header" align="center">
 	<h3>Weeping Angels</h3>
-  <p>Horror themed gamemode for Garry's Mod.</p>
+	<p>Horror themed gamemode for Garry's Mod.</p>
 	<div>
-    <image src=https://raw.githubusercontent.com/Cryotheus/weeping_angels/main/gamemodes/weeping_angels/logo.png></image>
-  </div>
-  <i>Listen, your life could depend on this. Don’t even blink. Blink and you’re dead. They are fast. Faster than you can believe. Don't turn your back, don't look away and don’t blink. Good luck.</i>
-  <p></p>
+		<image src=https://raw.githubusercontent.com/Cryotheus/weeping_angels/main/gamemodes/weeping_angels/logo.png></image>
+	</div>
+	<i>Listen, your life could depend on this. Don’t even blink. Blink and you’re dead. They are fast. Faster than you can believe. Don't turn your back, don't look away and don’t blink. Good luck.</i>
+	<p></p>
 </div>
 
 **Two teams**, the Survivors and Angels.  
