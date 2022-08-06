@@ -1,5 +1,8 @@
 --Cryotheum#4096
 --https://github.com/Cryotheus/preconfigured_loader
+--intent: make a multiplayer horror game where the enemies are weeping angels
+--status: active
+--motivation: a really cool e2 I made that performed well
 
 local config = {
 	loader = 4,		--00 100 the loader loads the loader! (not, its just adding itself for download)
@@ -22,6 +25,11 @@ local config = {
 		client = 21,	--10 101
 		server = 18,	--10 010
 		shared = 23,	--10 111
+	},
+	
+	nextbot = {
+		angel = 18,		--010 010
+		survivor = 18,	--010 010
 	},
 	
 	panels = {
@@ -75,6 +83,12 @@ local config = {
 	prop = {
 		server = 26,	--11 010
 		shared = 23,	--10 111
+	},
+	
+	think = {
+		client = 37,	--100 101
+		server = 34,	--100 010
+		shared = 39,	--100 111
 	},
 	
 	timer = {

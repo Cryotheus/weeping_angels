@@ -36,7 +36,9 @@ local trace_settings = {mask = MASK_SHOT_HULL, output = trace_output}
 local weapon_color = Vector(5, 0.6, 0.3)
 
 --swep functions
-function SWEP:DamageAngel(angel, attacker)
+function SWEP:DamageAngel(ply, attacker)
+	if true then return end --debug
+	
 	local damage = DamageInfo()
 	
 	damage:SetAttacker(attacker)
@@ -44,10 +46,10 @@ function SWEP:DamageAngel(angel, attacker)
 	damage:SetDamageForce(vector_origin)
 	damage:SetDamageType(DMG_PLASMA)
 	damage:SetInflictor(self)
-	damage:SetDamagePosition(angel:GetPos())
-	damage:SetReportedPosition(angel:GetPos())
+	damage:SetDamagePosition(ply:GetPos())
+	damage:SetReportedPosition(ply:GetPos())
 	
-	--angel:TakeDamageInfo(damage)
+	ply:TakeDamageInfo(damage)
 end
 
 function SWEP:Deploy()

@@ -6,43 +6,40 @@ local freeze_velocity = Vector(-1, -1, 0)
 GM.PlayerAngelFreezeRegistry = freeze_registry
 
 --local functions
-local function freeze(angel)
-	if angel:IsOnGround() then angel:SetVelocity(angel:GetVelocity() * freeze_velocity) end
+local function freeze(ply)
+	if ply:IsOnGround() then ply:SetVelocity(ply:GetVelocity() * freeze_velocity) end
 	
-	angel:SetFrozen(true)
-	hook.Run("PlayerAngelFrozen", angel, true)
+	ply:SetFrozen(true)
+	hook.Run("PlayerAngelFrozen", ply, true) --only used on client
 end
 
-local function unfreeze(angel)
-	angel:SetFrozen(false)
-	hook.Run("PlayerAngelFrozen", angel, false)
+local function unfreeze(ply)
+	ply:SetFrozen(false)
+	hook.Run("PlayerAngelFrozen", ply, false) --only used on client
 end
 
 --gamemode functions
-function GM:PlayerAngelFreeze(angel, key, state)
+function GM:PlayerAngelFreeze(ply, key, state)
 	local was_frozen = false
-	local registry = freeze_registry[angel]
+	local registry = freeze_registry[ply]
 	
 	if registry then
 		was_frozen = next(registry) and true or false
 		registry[key] = state or nil
 	else
 		registry = {[key] = state or nil}
-		freeze_registry[angel] = registry
+		freeze_registry[ply] = registry
 	end
 	
 	local now_frozen = next(registry) and true or false
 	
 	if now_frozen == was_frozen then return end
-	if now_frozen then freeze(angel)
-	else unfreeze(angel) end
+	if now_frozen then freeze(ply)
+	else unfreeze(ply) end
 end
 
 --gamemode hooks
-function GM:PlayerAngelFrozen(_angel, _frozen)
-	--debug
-	--_angel:SetColor(_frozen and Color(0, 144, 0) or Color(255, 0, 0))
-end
+function GM:PlayerAngelThink(ply) if ply:GetFrozen() then ply:SetVelocity(ply:GetVelocity() * cancel_velocity) end end
 
 --hooks
-hook.Add("PlayerVisibilityChanged", "WeepingAngelsPlayerAngelFreeze", function(angel, status) GAMEMODE:PlayerAngelFreeze(angel, "Visibility", status) end)
+hook.Add("PlayerVisibilityChanged", "WeepingAngelsPlayerAngelFreeze", function(angel, status) hook.Run("PlayerAngelFreeze", angel, "Visibility", status) end)

@@ -8,7 +8,6 @@ local radian = math.pi / 180
 local radian_half = radian * 0.5
 local screen_height
 local screen_width
-local team_rosters = WEEPING_ANGELS.PlayerTeamRosters
 local trace_leniency = 4
 local trace_output = {}
 local visibility_status = {}
@@ -64,8 +63,8 @@ local Entity_EyePos = entity_meta.EyePos
 local Entity_GetBonePosition = entity_meta.GetBonePosition
 local Player_GetFOV = player_meta.GetFOV
 local Entity_LookupBone = entity_meta.LookupBone
-local ScrH = ScrH
-local ScrW = ScrW
+local screen_height = ScrH
+local screen_width = ScrW
 local util_TraceLine = util.TraceLine
 local WorldToLocal = WorldToLocal
 
@@ -139,10 +138,7 @@ local function visible(viewer, target_player)
 end
 
 --sided local functions
-if CLIENT then
-	function screen_height() return ScrH() end
-	function screen_width() return ScrW() end
-else
+if SERVER then
 	function screen_height(ply) return player_screen_heights[ply] or 1080 end
 	function screen_width(ply) return player_screen_widths[ply] or 1920 end
 end
@@ -160,35 +156,7 @@ function GM:PlayerVisibilityChanged(angel, status)
 	self:PlayerPenalizeSpeed(angel, "Visibility", status_zero)
 end
 
-function GM:Think()
-	local cur_time = CurTime()
-	local removals
-	local survivors = team_rosters[TEAM_SURVIVOR]
-	
-	if SERVER then self:ThinkDamage(cur_time)
-	else self:ThinkTeams() end
-	
-	--call think methods for both teams of players
-	for angel_index, angel in ipairs(team_rosters[TEAM_ANGEL]) do
-		if angel:IsValid() then self:ThinkAngel(angel, cur_time, survivors)
-		elseif removals then table.insert(removals, angel)
-		else removals = {angel} end
-	end
-	
-	for survivor_index, survivor in ipairs(survivors) do
-		if survivor:IsValid() then self:ThinkSurvivor(survivor, cur_time)
-		elseif removals then table.insert(removals, survivor)
-		else removals = {survivor} end
-	end
-	
-	if removals then --in the very rare case we have invalid players, remove them from the roster
-		local removal_function = hook.GetTable().PlayerDisconnected.WeepingAngelsPlayerTeam
-		
-		for index, invalid in ipairs(removals) do removal_function(invalid) end
-	end
-end
-
-function GM:ThinkAngel(angel, _cur_time, survivors)
+function GM:PlayerVisibilityThinkAngel(angel, _cur_time, survivors)
 	local previous_status = visibility_status[angel]
 	local status = false
 	
@@ -205,14 +173,6 @@ function GM:ThinkAngel(angel, _cur_time, survivors)
 	--angel:LagCompensation(false)
 	
 	if status ~= previous_status then hook.Run("PlayerVisibilityChanged", angel, status) end
-	if status then angel:SetVelocity(angel:GetVelocity() * cancel_velocity) end
-end
-
-function GM:ThinkSurvivor(ply, cur_time)
-	if SERVER then
-		self:ThinkSurvivorDamage(ply, cur_time)
-		self:ThinkSurvivorFall(ply, cur_time)
-	end
 end
 
 --player meta functions
