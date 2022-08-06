@@ -151,7 +151,7 @@ function GM:PrePlayerDraw(ply, flags)
 		
 		model:DrawModel(flags)
 		
-		debugoverlay.Axis(model:GetPos(), model:GetAngles(), 5, RealFrameTime(), true)
+		--debugoverlay.Axis(model:GetPos(), model:GetAngles(), 5, RealFrameTime(), true)
 		
 		return true
 	end
@@ -164,6 +164,8 @@ hook.Add("PlayerChangedTeam", "WeepingAngelsPlayerAngel", function(ply, _old, ne
 	if new == TEAM_ANGEL then
 		local model = IsValid(model) and model or create_model(ply)
 		ply.FreezeBonesModel = model
+		
+		ply:DrawShadow(false)
 	elseif model then
 		ply.FreezeBonesModel = nil
 		

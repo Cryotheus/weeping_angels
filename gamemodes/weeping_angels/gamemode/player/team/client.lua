@@ -2,8 +2,11 @@
 local duplex_insert = WEEPING_ANGELS._DuplexInsert
 local duplex_remove = WEEPING_ANGELS._DuplexRemove
 local local_player = LocalPlayer()
-local team_retro = WEEPING_ANGELS.PlayerTeamRetro or {}
+local team_retro = WEEPING_ANGELS.PlayerTeamRetro
 local team_rosters = WEEPING_ANGELS.PlayerTeamRosters
+
+--globals
+WEEPING_ANGELS.PlayerTeamRetro = team_retro
 
 --gamemode functions
 function GM:ThinkTeams()
@@ -36,8 +39,6 @@ end
 hook.Add("InitPostEntity", "WeepingAngelsPlayerTeam", function() local_player = LocalPlayer() end)
 
 hook.Add("PlayerDisconnected", "WeepingAngelsPlayerTeam", function(ply)
-	local retro_team = team_retro[ply]
+	duplex_remove(team_rosters[team_retro[ply]], ply)
 	team_retro[ply] = nil
-	
-	duplex_remove(team_rosters[retro_team], ply)
 end)

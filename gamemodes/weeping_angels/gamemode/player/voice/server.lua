@@ -21,7 +21,7 @@ function GM:PlayerCanHearPlayersVoice(listener, talker)
 	if listener_team == TEAM_SURVIVOR then
 		if talker_team == TEAM_ANGEL and listener:GetIsCultist() then return true, true end
 		
-		return talker_team == TEAM_SURVIVOR, talker:GetLocalChatting()
+		return talker_team == TEAM_SURVIVOR, talker.GetLocalChatting and talker:GetLocalChatting() or false
 	end
 	
 	ErrorNoHaltWithStack(

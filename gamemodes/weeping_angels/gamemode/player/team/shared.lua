@@ -2,6 +2,8 @@
 local is_hidden_map = string.StartWith(game.GetMap(), "hdn_") and true or false
 local team_indexable = {[TEAM_CONNECTING] = {}, [TEAM_SPECTATOR] = {}, [TEAM_UNASSIGNED] = {}, [TEAM_SURVIVOR] = {}, [TEAM_ANGEL] = {}}
 local team_methods = table.Copy(team_indexable)
+local team_retro = WEEPING_ANGELS.PlayerTeamRetro or {}
+local team_rosters = WEEPING_ANGELS.PlayerTeamRosters or table.Copy(team_indexable)
 
 --local tables
 local teams = {
@@ -22,17 +24,16 @@ local teams = {
 	}
 }
 
-local team_rosters = WEEPING_ANGELS.PlayerTeamRosters or table.Copy(team_indexable)
-
 --globals
 GM.PlayerTeams = teams
+WEEPING_ANGELS.PlayerTeamRetro = team_retro
 WEEPING_ANGELS.PlayerTeamRosters = team_rosters
 
 --gamemode functions
-function GM:TeamRegisterMethod(team_index, key, method) team_methods[team_index][key] = method end
+function GM:PlayerTeamRegisterMethod(team_index, key, method) team_methods[team_index][key] = method end
 
-function GM:TeamRunMethod(ply, key, ...)
-	if isstring(ply) then return self:TeamRunMethod(LocalPlayer(), ply, key, ...) end
+function GM:PlayerTeamRunMethod(ply, key, ...)
+	if isstring(ply) then return self:PlayerTeamRunMethod(LocalPlayer(), ply, key, ...) end
 	
 	local method = team_methods[ply:Team()][key]
 	

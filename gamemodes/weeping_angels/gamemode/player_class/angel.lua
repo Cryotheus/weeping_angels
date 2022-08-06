@@ -18,7 +18,11 @@ local function fullbright_changed(ply, _name, _old, new)
 	hook.Run("VisibilityFullbright", "AngelPlayerClass", new)
 end
 
-local function frozen_changed(ply, _name, old, new) if old ~= new then hook.Run("PlayerAngelFrozen", ply, new) end end
+local function frozen_changed(ply, _name, old, new)
+	print(ply, _name, old, new)
+	
+	if old ~= new then hook.Run("PlayerAngelFrozen", ply, new) end
+end
 
 --player functions
 function PLAYER:Death(_inflictor, _attacker)
@@ -28,9 +32,11 @@ function PLAYER:Death(_inflictor, _attacker)
 	ply:Spawn()
 end
 
-function PLAYER:DoFreeze(ply, move)
+function PLAYER:DoFreeze(ply, move, command)
 	if ply:GetFrozen() then
-		move:SetMaxClientSpeed(0)
+		move:SetButtons(0)
+		
+		if command then command:ClearButtons() end
 		
 		return true
 	end
@@ -72,9 +78,9 @@ function PLAYER:Spawn()
 	return BaseClass.Spawn(self)
 end
 
-function PLAYER:StartMove(move) --copies from the user command to the move
+function PLAYER:StartMove(move, command) --copies from the user command to the move
 	--more?
-	if self:DoFreeze(self.Player, move) then return end
+	if self:DoFreeze(self.Player, move, command) then return end
 end
 
 --post

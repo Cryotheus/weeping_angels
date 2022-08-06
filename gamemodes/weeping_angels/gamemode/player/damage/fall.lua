@@ -3,7 +3,7 @@ local performance_cap = 1024
 local threshold = 512
 
 --gamemode hooks
-function GM:GetFallDamage(ply, speed) return self:TeamRunMethod(ply, "Fall", speed) end
+function GM:GetFallDamage(ply, speed) return self:PlayerTeamRunMethod(ply, "Fall", speed) end
 
 function GM:PlayerDamageFallInjury(ply, status)
 	self:PlayerPenalizeJump(ply, "PlayerDamageFall", status and 0.7 or nil)
@@ -22,7 +22,7 @@ function GM:ThinkSurvivorFall(ply, cur_time)
 end
 
 --post
-GM:TeamRegisterMethod(TEAM_ANGEL, "Fall", function(ply, speed)
+GM:PlayerTeamRegisterMethod(TEAM_ANGEL, "Fall", function(ply, speed)
 	if speed < threshold then return end
 	
 	local speed = math.Clamp(speed - 512, 0, performance_cap)
@@ -35,7 +35,7 @@ GM:TeamRegisterMethod(TEAM_ANGEL, "Fall", function(ply, speed)
 	)
 end)
 
-GM:TeamRegisterMethod(TEAM_SURVIVOR, "Fall", function(ply, speed)
+GM:PlayerTeamRegisterMethod(TEAM_SURVIVOR, "Fall", function(ply, speed)
 	if speed < threshold then return end
 	
 	local injured_time = CurTime() + math.min((speed - threshold) / 32, 12)

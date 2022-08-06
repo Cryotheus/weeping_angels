@@ -70,7 +70,7 @@ function SWEP:PrimaryAttack()
 	local animate = false
 	local owner = self:GetOwner()
 	
-	if owner:GetFrozen() then return end
+	if owner:GetFrozen() or true then return end
 	
 	local range = self.AttackDistance + math.min(owner:GetVelocity():Length2D() ^ 1.2 * 0.01, 90)
 	local shooting_position = owner:GetShootPos()

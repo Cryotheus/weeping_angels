@@ -92,7 +92,11 @@ end
 
 --commands
 concommand.Add("wa_bot", function(ply, _command, arguments)
-	local bot = player.CreateNextBot("Pending name...")
+	local record = {}
+	
+	for index, ply in ipairs(player.GetAll()) do record[ply:EntIndex()] = true end
+	
+	local bot = player.CreateNextBot("Nextbot " .. (#record + 1))
 	
 	set_team_via_parse(ply, bot, arguments[1])
 	

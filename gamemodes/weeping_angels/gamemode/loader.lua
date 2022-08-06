@@ -6,12 +6,14 @@ local config = {
 	cl_init = 4,	--00 100
 	duplex = 15,	--01 111
 	health = 15,	--01 111
+	math = 15,		--01 111
 	time = 23,		--10 111
 	shared = 7,		--00 111
 	
 	empty_calls = {
 		client = 13,	--01 101
 		server = 10,	--01 010
+		shared = 23,	--10 111
 	},
 	
 	hud = {client = 21},			--10 101
@@ -34,6 +36,7 @@ local config = {
 		penalize = 23,	--010 111
 		pickup = 34,	--100 010
 		spawn = 18,		--010 010
+		speak = 18,		--010 010
 		
 		angel = {
 			client = 21,		--10 101
@@ -63,9 +66,10 @@ local config = {
 	},
 	
 	player_class = {
-		angel = 31,		--11 111
-		survivor = 31,	--11 111
-		validated = 23	--10 111
+		angel = 31,		--011 111
+		angel_bot = 39,	--100 111
+		survivor = 31,	--011 111
+		validated = 23	--010 111
 	},
 	
 	prop = {

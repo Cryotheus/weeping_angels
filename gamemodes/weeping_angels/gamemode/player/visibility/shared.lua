@@ -1,4 +1,5 @@
 --locals
+local cancel_velocity = Vector(-1, -1, 0)
 local entity_meta = FindMetaTable("Entity")
 local player_meta = FindMetaTable("Player")
 local player_screen_heights = WEEPING_ANGELS.NetPlayerHeights
@@ -51,10 +52,10 @@ local use_bones = {
 }
 
 local visibility_trace = {
-	mask = MASK_OPAQUE,
+	mask = MASK_VISIBLE_AND_NPCS,
 	output = trace_output
 }
-
+--
 --localized functions
 local math_abs = math.abs
 local math_tan = math.tan
@@ -112,15 +113,29 @@ local function visible(viewer, target_player)
 	local viewer_height = screen_height(viewer)
 	local viewer_width = screen_width(viewer)
 	
+	--viewer:LagCompensation(true)
+	
 	for index, bone_name in ipairs(use_bones) do
 		local bone_index = Entity_LookupBone(target_player, bone_name)
 		
 		if bone_index then
 			local bone_position = Entity_GetBonePosition(target_player, bone_index)
 			
-			if position_in_fov(bone_position, eye_position, eye_angles, fov, viewer_width, viewer_height) and trace_visibility(eye_position, bone_position, filter) then return true end
-		else return false end
+			if position_in_fov(bone_position, eye_position, eye_angles, fov, viewer_width, viewer_height) and trace_visibility(eye_position, bone_position, filter) then
+				--viewer:LagCompensation(false)
+				
+				return true
+			end
+		else
+			--viewer:LagCompensation(false)
+			
+			return false
+		end
 	end
+	
+	--viewer:LagCompensation(false)
+	
+	return false
 end
 
 --sided local functions
@@ -147,19 +162,37 @@ end
 
 function GM:Think()
 	local cur_time = CurTime()
+	local removals
 	local survivors = team_rosters[TEAM_SURVIVOR]
 	
 	if SERVER then self:ThinkDamage(cur_time)
 	else self:ThinkTeams() end
 	
 	--call think methods for both teams of players
-	for angel_index, angel in ipairs(team_rosters[TEAM_ANGEL]) do self:ThinkAngel(angel, cur_time, survivors) end
-	for survivor_index, survivor in ipairs(survivors) do self:ThinkSurvivor(survivor, cur_time) end
+	for angel_index, angel in ipairs(team_rosters[TEAM_ANGEL]) do
+		if angel:IsValid() then self:ThinkAngel(angel, cur_time, survivors)
+		elseif removals then table.insert(removals, angel)
+		else removals = {angel} end
+	end
+	
+	for survivor_index, survivor in ipairs(survivors) do
+		if survivor:IsValid() then self:ThinkSurvivor(survivor, cur_time)
+		elseif removals then table.insert(removals, survivor)
+		else removals = {survivor} end
+	end
+	
+	if removals then --in the very rare case we have invalid players, remove them from the roster
+		local removal_function = hook.GetTable().PlayerDisconnected.WeepingAngelsPlayerTeam
+		
+		for index, invalid in ipairs(removals) do removal_function(invalid) end
+	end
 end
 
 function GM:ThinkAngel(angel, _cur_time, survivors)
 	local previous_status = visibility_status[angel]
 	local status = false
+	
+	--angel:LagCompensation(true)
 	
 	for survivor_index, survivor in ipairs(survivors) do
 		if survivor:Alive() and visible(survivor, angel) then
@@ -169,7 +202,10 @@ function GM:ThinkAngel(angel, _cur_time, survivors)
 		end
 	end
 	
+	--angel:LagCompensation(false)
+	
 	if status ~= previous_status then hook.Run("PlayerVisibilityChanged", angel, status) end
+	if status then angel:SetVelocity(angel:GetVelocity() * cancel_velocity) end
 end
 
 function GM:ThinkSurvivor(ply, cur_time)

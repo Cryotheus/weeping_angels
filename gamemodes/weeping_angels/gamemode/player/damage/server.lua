@@ -6,7 +6,7 @@ local regen_interval = 0.1
 
 --gamemode hooks
 function GM:OnDamagedByExplosion() end --prevents tinnitus
-function GM:PlayerShouldTakeDamage(ply, attacker) return self:TeamRunMethod(ply, "ShouldTakeDamage", attacker) end
+function GM:PlayerShouldTakeDamage(ply, attacker) return self:PlayerTeamRunMethod(ply, "ShouldTakeDamage", attacker) end
 
 function GM:ThinkDamage(cur_time)
 	if cur_time > next_regen_time then
@@ -25,7 +25,7 @@ function GM:ThinkSurvivorDamageHeal(ply, cur_time)
 end
 
 --post
-GM:TeamRegisterMethod(TEAM_ANGEL, "ShouldTakeDamage", function(ply, attacker)
+GM:PlayerTeamRegisterMethod(TEAM_ANGEL, "ShouldTakeDamage", function(ply, attacker)
 	if not attacker:IsPlayer() then return false end
 	
 	local attacker_team = attacker:Team()
@@ -38,7 +38,7 @@ GM:TeamRegisterMethod(TEAM_ANGEL, "ShouldTakeDamage", function(ply, attacker)
 	return true
 end)
 
-GM:TeamRegisterMethod(TEAM_SURVIVOR, "ShouldTakeDamage", function(ply)
+GM:PlayerTeamRegisterMethod(TEAM_SURVIVOR, "ShouldTakeDamage", function(ply)
 	ply:SetLastDamaged(CurTime())
 	
 	return true
