@@ -151,18 +151,16 @@ function SWEP:PlayAnimation(name, view_model, speed)
 	if name ~= "seq_admire" then self.AdmireSpeak = false end
 end
 
-function SWEP:PrimaryAttack()
-	if self:GetUsingFists() then return self:ThrowPunch() end
-	
-	
-end
+function SWEP:PrimaryAttack() if self:GetUsingFists() then return self:ThrowPunch() end end
 
 function SWEP:Reload()
+	if not self:GetOwner():KeyPressed(IN_RELOAD) then return end --semi-auto reload 
+	
 	local cur_time = CurTime()
 	
 	if cur_time < self:GetNextReload() then return end
 	
-	self:SetNextReload(cur_time + 0.25)
+	self:SetNextReload(cur_time + 0.5)
 	
 	if self:GetUsingFists() then
 		self:PlayAnimation("fists_holster")
@@ -186,11 +184,7 @@ function SWEP:Reload()
 	self:UpdateNextIdle()
 end
 
-function SWEP:SecondaryAttack()
-	if self:GetUsingFists() then return self:ThrowPunch() end
-	
-	
-end
+function SWEP:SecondaryAttack() self:PrimaryAttack() end
 
 function SWEP:SetSwingRange(range, size)
 	local size = size or 10

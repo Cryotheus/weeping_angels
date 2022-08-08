@@ -19,8 +19,8 @@ function PLAYER:Loadout()
 	ply:Give("wa_survivor_weapon")
 	
 	if math.random(8) == 1 then
-		ply:Give("weapon_357")
-		ply:GiveAmmo(12, "357", true)
+		--ply:Give("weapon_357")
+		--ply:GiveAmmo(12, "357", true)
 	end
 end
 

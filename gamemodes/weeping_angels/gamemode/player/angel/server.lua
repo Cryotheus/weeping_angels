@@ -1,4 +1,5 @@
 --locals
+local cancel_velocity = Vector(-1, -1, 0)
 local freeze_registry = {}
 local freeze_velocity = Vector(-1, -1, 0)
 

@@ -29,6 +29,8 @@ WEEPING_ANGELS.PlayerPenalizeWalks = speed_walks
 
 --gamemode functions
 function GM:PlayerPenalizeJump(ply, key, multiplier)
+	if true then return end
+	
 	local last_record = jump_penalties_record[ply] or 1
 	local record = 1
 	local registry = jump_penalties_registry[ply]
@@ -48,6 +50,8 @@ function GM:PlayerPenalizeJump(ply, key, multiplier)
 end
 
 function GM:PlayerPenalizeSpeed(ply, key, multiplier)
+	if true then return end
+	
 	local last_record = speed_penalties_record[ply] or 1
 	local record = 1
 	local registry = speed_penalties_registry[ply]
@@ -69,7 +73,7 @@ function GM:PlayerPenalizeSpeed(ply, key, multiplier)
 	ply:SetWalkSpeed()
 end
 
----[[player meta functions
+--[[player meta functions
 function player_meta:SetJumpPower(power)
 	local penalty = jump_penalties_record[self] or 1
 	local power = power or jump_powers[self] or self:GetJumpPower()
@@ -80,7 +84,7 @@ end
 
 function player_meta:SetLadderClimbSpeed(speed)
 	local penalty = speed_penalties_record[self] or 1
-	local speed = speed or speed_climbs[self] or self:GetLadderClimbSpeed()
+	local speed = speed ~= 0 and speed or speed_climbs[self] or self:GetLadderClimbSpeed()
 	speed_climbs[self] = speed
 	
 	self:SetLadderClimbSpeedX_WeepingAngels(penalty * speed)
@@ -88,23 +92,15 @@ end
 
 function player_meta:SetRunSpeed(speed)
 	local penalty = speed_penalties_record[self] or 1
-	speed = penalty == 0 and epsilon or speed or speed_runs[self] or self:GetRunSpeed()
+	speed = speed ~= 0 and speed or speed_runs[self] or self:GetRunSpeed()
 	speed_runs[self] = speed
-	speed = penalty == 0 and epsilon or penalty * speed
 	
-	if self:Team() == TEAM_SURVIVOR then
-		self:SetWalkSpeedX_WeepingAngels(speed)
-		self:SetRunSpeedX_WeepingAngels(speed)
-		
-		return
-	end
-	
-	self:SetSlowWalkSpeedX_WeepingAngels(speed)
+	self:SetSlowWalkSpeedX_WeepingAngels(penalty == 0 and epsilon or penalty * speed)
 end
 
 function player_meta:SetSlowWalkSpeed(speed)
 	local penalty = speed_penalties_record[self] or 1
-	speed = speed or speed_slow_walks[self] or self:GetSlowWalkSpeed()
+	speed = speed ~= 0 and speed or speed_slow_walks[self] or self:GetSlowWalkSpeed()
 	speed_slow_walks[self] = speed
 	
 	self:SetLadderClimbSpeedX_WeepingAngels(penalty == 0 and epsilon or penalty * speed)
@@ -112,19 +108,12 @@ end
 
 function player_meta:SetWalkSpeed(speed)
 	local penalty = speed_penalties_record[self] or 1
-	local speed = speed or speed_walks[self] or self:GetWalkSpeed()
+	local speed = speed ~= 0 and speed or speed_walks[self] or self:GetWalkSpeed()
 	speed_walks[self] = speed
-	speed = penalty * speed
 	
-	if self:Team() == TEAM_SURVIVOR then
-		self:SetWalkSpeedX_WeepingAngels(speed)
-		self:SetRunSpeedX_WeepingAngels(speed)
-		
-		return
-	end
-	
-	self:SetWalkSpeedX_WeepingAngels(speed)
-end --]]
+	self:SetWalkSpeedX_WeepingAngels(penalty == 0 and epsilon or penalty * speed)
+end
+--]]
 
 --hooks
 hook.Add("PlayerDisconnected", "WeepingAngelsPlayerPenalize", function(ply)

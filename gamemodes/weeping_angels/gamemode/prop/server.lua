@@ -48,9 +48,9 @@ function GM:OnEntityCreated(entity)
 end
 
 function GM:PlayerUse(ply, entity)
-	local class = entity:GetClass()
+	if self:PlayerTeamIsObserver(ply) then return false end
 	
-	if frozen_classes[class] then
+	if frozen_classes[entity:GetClass()] then
 		local physics = entity:GetPhysicsObject()
 		
 		if IsValid(physics) and not physics:IsMotionEnabled() and self:AllowPlayerPickup(ply, entity, true) then

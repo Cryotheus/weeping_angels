@@ -10,4 +10,5 @@ DeriveGamemode("sandbox")
 --globals
 TEAM_SURVIVOR = 1
 TEAM_ANGEL = 2
+TEAM_BUILDER = 3
 WEEPING_ANGELS = WEEPING_ANGELS or {}

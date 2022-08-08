@@ -5,7 +5,7 @@ ENT.Type = "anim"
 
 ENT.PrintName = "Visibility Test"
 ENT.Author = "Cryotheum"
-ENT.Contact = "Cryotheum#4096"
+ENT.Contact = "Discord: Cryotheum#4096"
 ENT.Purpose = "Testing visibility in Weeping Angels"
 ENT.Instructions = "None"
 ENT.Spawnable = true

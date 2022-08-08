@@ -1,0 +1,5 @@
+GM.ColorError = Color(255, 64, 64)
+GM.ColorErrorDark = Color(192, 0, 0)
+GM.ColorGeneric = Color(255, 255, 255)
+GM.ColorSignificant = Color(64, 128, 192)
+GM.ColorSignificantBorder = Color(48, 96, 144)

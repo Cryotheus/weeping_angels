@@ -1,5 +1,4 @@
 --locals
-local cancel_velocity = Vector(-1, -1, 0)
 local entity_meta = FindMetaTable("Entity")
 local player_meta = FindMetaTable("Player")
 local player_screen_heights = WEEPING_ANGELS.NetPlayerHeights
@@ -11,6 +10,7 @@ local screen_width
 local trace_leniency = 4
 local trace_output = {}
 local visibility_status = {}
+local visibility_viewers = {}
 
 --local tables
 --[[
@@ -54,7 +54,7 @@ local visibility_trace = {
 	mask = MASK_VISIBLE_AND_NPCS,
 	output = trace_output
 }
---
+
 --localized functions
 local math_abs = math.abs
 local math_tan = math.tan
@@ -112,8 +112,6 @@ local function visible(viewer, target_player)
 	local viewer_height = screen_height(viewer)
 	local viewer_width = screen_width(viewer)
 	
-	--viewer:LagCompensation(true)
-	
 	for index, bone_name in ipairs(use_bones) do
 		local bone_index = Entity_LookupBone(target_player, bone_name)
 		
@@ -121,18 +119,13 @@ local function visible(viewer, target_player)
 			local bone_position = Entity_GetBonePosition(target_player, bone_index)
 			
 			if position_in_fov(bone_position, eye_position, eye_angles, fov, viewer_width, viewer_height) and trace_visibility(eye_position, bone_position, filter) then
-				--viewer:LagCompensation(false)
-				
+				--originally had lag compensation
+				--but it kinda sucked and so did its performance
+				--may remake it in the future
 				return true
 			end
-		else
-			--viewer:LagCompensation(false)
-			
-			return false
-		end
+		else return false end
 	end
-	
-	--viewer:LagCompensation(false)
 	
 	return false
 end
@@ -145,40 +138,45 @@ end
 
 --globals
 GM.PlayerVisibilityBones = use_bones
+GM.PlayerVisibilityViewers = visibility_viewers
 
 --gamemode hooks
-function GM:PlayerVisibilityChanged(angel, status)
+function GM:PlayerVisibilityChanged(ply, status)
 	local status_zero = status and 0 or nil
 	
-	visibility_status[angel] = status
+	visibility_status[ply] = status
 	
-	self:PlayerPenalizeJump(angel, "Visibility", status_zero)
-	self:PlayerPenalizeSpeed(angel, "Visibility", status_zero)
+	self:PlayerPenalizeJump(ply, "Visibility", status_zero)
+	self:PlayerPenalizeSpeed(ply, "Visibility", status_zero)
 end
 
-function GM:PlayerVisibilityThinkAngel(angel, _cur_time, survivors)
-	local previous_status = visibility_status[angel]
+function GM:PlayerVisibilityThinkAngel(ply, _cur_time, survivors)
+	local previous_status = visibility_status[ply]
 	local status = false
-	
-	--angel:LagCompensation(true)
+	local viewers = {}
 	
 	for survivor_index, survivor in ipairs(survivors) do
-		if survivor:Alive() and visible(survivor, angel) then
-			status = true
-			
-			break
+		if survivor:Alive() and visible(survivor, ply) then
+			--build a list of the viewers
+			table.insert(viewers, survivor)
 		end
 	end
 	
-	--angel:LagCompensation(false)
+	if next(viewers) then
+		visibility_viewers[ply] = viewers
+		status = true
+	else visibility_viewers[ply] = nil end
 	
-	if status ~= previous_status then hook.Run("PlayerVisibilityChanged", angel, status) end
+	if status ~= previous_status then hook.Run("PlayerVisibilityChanged", ply, status) end
 end
 
 --player meta functions
 function player_meta:PointIsVisible(target) return position_in_viewer_fov(target, self) and trace_visibility(self:EyePos(), target, {self}) end
-function player_meta:PlayerIsVisible(target_player) return visible(self, target_player) end
+function player_meta:PlayerIsVisible(ply) return visible(self, ply) end
 function player_meta:ToggleFullbright() if self.SetFullbright then self:SetFullbright(not self:GetFullbright()) end end
 
 --hooks
-hook.Add("PlayerDisconnected", "WeepingAngelsPlayerVisibility", function(ply) visibility_status[ply] = nil end)
+hook.Add("PlayerDisconnected", "WeepingAngelsPlayerVisibility", function(ply)
+	visibility_viewers[ply] = nil
+	visibility_status[ply] = nil
+end)

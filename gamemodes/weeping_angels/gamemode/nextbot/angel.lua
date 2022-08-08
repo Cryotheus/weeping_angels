@@ -1,4 +1,4 @@
 --gamemode functions
-function GM:NextbotThinkAngel(ply, _cur_time, _survivors, _angels)
+function GM:NextbotAngelThink(_ply, _cur_time, _survivors, _angels)
 	
 end

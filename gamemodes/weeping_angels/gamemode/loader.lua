@@ -7,6 +7,7 @@
 local config = {
 	loader = 4,		--00 100 the loader loads the loader! (not, its just adding itself for download)
 	cl_init = 4,	--00 100
+	color = 15,		--01 111
 	duplex = 15,	--01 111
 	health = 15,	--01 111
 	math = 15,		--01 111
@@ -19,7 +20,8 @@ local config = {
 		shared = 23,	--10 111
 	},
 	
-	hud = {client = 21},			--10 101
+	hud = {client = 21},		--10 101
+	message = {server = 18},	--10 010
 	
 	net = {
 		client = 21,	--10 101
@@ -38,17 +40,18 @@ local config = {
 	},
 	
 	player = {
-		hands = 18,		--010 010
-		key = 39,		--100 111
-		meta = 15,		--001 111
-		penalize = 23,	--010 111
-		pickup = 34,	--100 010
-		spawn = 18,		--010 010
-		speak = 18,		--010 010
+		flashlight = 34,	--100 010
+		hands = 18,			--010 010
+		key = 39,			--100 111
+		meta = 15,			--001 111
+		noclip = 39,		--100 111
+		penalize = 23,		--010 111
+		pickup = 34,		--100 010
+		spawn = 18,			--010 010
+		speak = 18,			--010 010
 		
 		angel = {
 			client = 21,		--10 101
-			flashlight = 18,	--10 010
 			server = 18,		--10 010
 		},
 		
@@ -76,6 +79,7 @@ local config = {
 	player_class = {
 		angel = 31,		--011 111
 		angel_bot = 39,	--100 111
+		builder = 31,	--011 111
 		survivor = 31,	--011 111
 		validated = 23	--010 111
 	},

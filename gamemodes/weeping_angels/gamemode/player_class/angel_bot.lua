@@ -6,64 +6,56 @@ local PLAYER = table.Merge({DisplayName = "Weeping Angel Bot"}, BaseClass)
 
 --player functions
 function PLAYER:Spawn()
-	local ply = self.Player
+	local driver = self.Driver
 	
-	ply.PathChase = ply.PathChase or Path("Chase")
-	ply.PathFollow = ply.PathFollow or Path("Follow")
+	if IsValid(driver) then return end
+	
+	local ply = self.Player
+	driver = ents.Create("wa_angel_driver")
+	
+	driver:SetPos(ply:GetPos())
+	driver:Spawn()
+	driver:SetBot(ply)
+	
+	ply.Driver = driver
+end
+
+function PLAYER:SetMoveSpeed(ply, move, speed)
+	move:SetMaxSpeed(speed)
+	move:SetMaxClientSpeed(speed)
+	ply:SetMaxSpeed(speed)
 end
 
 function PLAYER:StartMove(move, command)
 	local move_speed = self.RunSpeed
 	local ply = self.Player
 	
-	move:SetMaxSpeed(move_speed)
-	move:SetMaxClientSpeed(move_speed)
-	ply:SetMaxSpeed(move_speed)
+	self:SetMoveSpeed(ply, move, move_speed)
 	
 	if self:DoFreeze(ply, move, command) or CLIENT then return end
 	
-	if false then --debug behavior
+	local target_position = ply.MoveTarget
+	
+	if isvector(target_position) then --debug behavior
 		local player_pos = ply:EyePos()
 		local target = self.BotTarget
-		local target_distance = math.huge
-		local target_position
-		
-		if not IsValid(target) then --find a survivor
-			for index, survivor in ipairs(WEEPING_ANGELS.PlayerTeamRosters[TEAM_SURVIVOR]) do
-				local distance = survivor:EyePos():Distance(player_pos)
-				
-				if distance < target_distance then
-					target = survivor
-					target_distance = distance
-				end
-			end
-			
-			if not IsValid(target) then
-				command:ClearButtons()
-				move:SetButtons(0)
-				
-				return
-			end
-			
-			self.BotTarget = target
-			target_position = target:EyePos()
-		else
-			target_position = target:EyePos()
-			target_distance = target:EyePos():Distance(player_pos)
-		end
+		local target_distance = target_position:Distance(player_pos)
 		
 		local angles = (target_position - player_pos):Angle()
+		
+		self:SetMoveSpeed(ply, move, target_distance)
 		
 		command:SetViewAngles(angles)
 		ply:SetEyeAngles(angles)
 		move:SetMoveAngles(angles)
 		
+		--[[
 		if target_distance < 96 then
 			command:ClearButtons()
 			move:SetButtons(0)
 			
 			return
-		end
+		end]]
 		
 		local new_buttons = bit.band(move:GetButtons(), duck_mask)
 		
