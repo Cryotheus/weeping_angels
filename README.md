@@ -1,3 +1,7 @@
+# ⚠️ Archived ⚠️
+**No longer in development.**  
+I have stopped palying Garry's Mod, and will likely never create anything new for Garry's Mod.
+# Original README Follows
 <div id="header" align="center">
 	<h3>Weeping Angels</h3>
 	<p>Horror themed gamemode for Garry's Mod.</p>
